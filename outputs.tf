@@ -1,5 +1,6 @@
-output "echo_text" {
-  value       = var.echo_text
-  description = "The text to echo"
-}
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
+output "management_groups" {
+    value = local.management_group_output
+}
