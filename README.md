@@ -1,57 +1,87 @@
-# Microsoft Verified Terraform Module
+<!-- markdownlint-configure-file { "MD004": { "style": "consistent" } } -->
+<!-- markdownlint-disable MD033 -->
+<p align="center">  
+  <h1 align="left">Azure NoOps Accelerator Management Groups Module</h1>
+  <p align="center">
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange.svg" alt="MIT License"></a>
+    <a href="https://registry.terraform.io/modules/azurenoops/overlays-management-groups/azurerm/"><img src="https://img.shields.io/badge/terraform-registry-blue.svg" alt="Azure NoOps TF Registry"></a></br>
+  </p>
+</p>
+<!-- markdownlint-enable MD033 -->
 
-The Verified Terraform module is a template repository to help developers create their own Terraform Module.
+This Overlay terraform module simplifies the creation of custom management groups to be used in a [SCCA compliant Mission Enclave](https://registry.terraform.io/modules/azurenoops/overlays-hubspoke/azurerm/latest).
 
-As we've used Microsoft 1ES Runners Pool as our acceptance test runner, **only Microsoft members could use this template for now**.
+## SCCA Compliance
 
-Enjoy it by following steps:
+This module can be SCCA compliant and can be used in a SCCA compliant Mission Enclave. Enable private endpoints and SCCA compliant network rules to make it SCCA compliant.
 
-1. Use [this template](https://github.com/Azure/terraform-verified-module) to create your repository.
-2. Read [Onboard 1ES hosted Github Runners Pool through Azure Portal](https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/1es-github-runners/createpoolportal), install [1ES Resource Management](https://github.com/apps/1es-resource-management) on your repo.
-3. Add a Github [Environment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment) named **acctests** in your repo, setup [**Required Reviewers**](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#required-reviewers).
-4. Update [`acc-test.yaml`](.github/workflows/acc-test.yaml), modify `runs-on: [self-hosted, 1ES.Pool=<YOUR_REPO_NAME>]` with your 1es runners' pool name (basically it's your repo's name).
-5. Write Terraform code in a new branch.
-6. Run `docker run --rm -v ${pwd}:/src -w /src mcr.microsoft.com/azterraform:latest make pre-commit` to format the code.
-7. Run `docker run --rm -v $(pwd):/src -w /src mcr.microsoft.com/azterraform:latest make pr-check` to run the check in local.
-8. Create a pull request for the main branch.
-    * CI pr-check will be executed automatically.
-    * Once pr-check was passed, with manually approval, the e2e test and version upgrade test would be executed.
-9. Merge pull request.
-10. Enjoy it!
+For more information, please read the [SCCA documentation]("https://www.cisa.gov/secure-cloud-computing-architecture").
 
-<!-- BEGIN_TF_DOCS -->
-## Requirements
+## Contributing
 
-| Name                                                                      | Version |
-|---------------------------------------------------------------------------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.1  |
-| <a name="requirement_null"></a> [null](#requirement\_null)                | >= 3.1  |
+If you want to contribute to this repository, feel free to to contribute to our Terraform module.
 
-## Providers
+More details are available in the [CONTRIBUTING.md](./CONTRIBUTING.md#pull-request-process) file.
 
-| Name                                                 | Version |
-|------------------------------------------------------|---------|
-| <a name="provider_null"></a> [null](#provider\_null) | >= 3.1  |
+### [Managment Group Module](module)
 
-## Modules
+This module is used to create a Management Group in Azure. It can be used to create a new Management Group or to add a subscription to an existing Management Group. It can also be used to create a new Management Group and add a subscription to it. 
 
-No modules.
-
-## Resources
-
-| Name                                                                                                       | Type     |
-|------------------------------------------------------------------------------------------------------------|----------|
-| [null_resource.nop](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-
-## Inputs
-
-| Name                                                            | Description      | Type     | Default | Required |
-|-----------------------------------------------------------------|------------------|----------|---------|:--------:|
-| <a name="input_echo_text"></a> [echo\_text](#input\_echo\_text) | The text to echo | `string` | n/a     |   yes    |
-
-## Outputs
-
-| Name                                                              | Description      |
-|-------------------------------------------------------------------|------------------|
-| <a name="output_echo_text"></a> [echo\_text](#output\_echo\_text) | The text to echo |
-<!-- END_TF_DOCS -->
+```hcl
+module "mod_management_group" {
+  source            = "../.."
+  root_id           = "anoa"
+  root_parent_id    = data.azurerm_subscription.current_client.tenant_id
+  root_name         = "anoa"
+  management_groups =  {
+    "platforms" = {
+      display_name               = "platforms"
+      management_group_name      = "platforms"
+      parent_management_group_id = "anoa"
+      subscription_ids           = []
+    },
+    "workloads" = {
+      display_name               = "workloads"
+      management_group_name      = "workloads"
+      parent_management_group_id = "anoa"
+      subscription_ids           = []
+    },
+    "sandbox" = {
+      display_name               = "sandbox"
+      management_group_name      = "sandbox"
+      parent_management_group_id = "anoa"
+      subscription_ids           = []
+    },
+    "identity" = {
+      display_name               = "identity"
+      management_group_name      = "identity"
+      parent_management_group_id = "platforms"
+      subscription_ids           = []
+    },
+    "transport" = {
+      display_name               = "transport"
+      management_group_name      = "transport"
+      parent_management_group_id = "platforms"
+      subscription_ids           = ["${data.azurerm_subscription.current_client.subscription_id}"]
+    },
+    "management" = {
+      display_name               = "management"
+      management_group_name      = "management"
+      parent_management_group_id = "platforms"
+      subscription_ids           = []
+    },
+    "internal" = {
+      display_name               = "internal"
+      management_group_name      = "internal"
+      parent_management_group_id = "workloads"
+      subscription_ids           = []
+    },
+    "partners" = {
+      display_name               = "partners"
+      management_group_name      = "partners"
+      parent_management_group_id = "workloads"
+      subscription_ids           = []
+    }
+  }
+}
+```
