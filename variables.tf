@@ -41,7 +41,7 @@ variable "root_name" {
 
 variable "library_path" {
   type        = string
-  description = "If specified, sets the path to a custom library folder for archetype artefacts."
+  description = "If specified, sets the path to a custom library folder for archetype artifacts."
   default     = ""
 }
 

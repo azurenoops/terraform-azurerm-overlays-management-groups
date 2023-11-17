@@ -23,7 +23,7 @@ If you want to contribute to this repository, feel free to to contribute to our 
 
 More details are available in the [CONTRIBUTING.md](./CONTRIBUTING.md#pull-request-process) file.
 
-### [Managment Group Module](module)
+### [Management Group Module](module)
 
 This module is used to create a Management Group in Azure. It can be used to create a new Management Group or to add a subscription to an existing Management Group. It can also be used to create a new Management Group and add a subscription to it. 
 

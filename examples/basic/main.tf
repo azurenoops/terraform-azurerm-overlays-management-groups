@@ -5,11 +5,11 @@
 SUMMARY: Module Example to deploy an Azure Management Group Hierarchy
 DESCRIPTION: The following components will be options in this deployment
              * Management Group Hierarchy
-AUTHOR/S: jspinella
+AUTHOR/S: jrspinella
 */
 
 ################################################
-### Management Group Configuations  ###
+### Management Group Configurations  ###
 ################################################
 
 data "azurerm_subscription" "current_client" {}
